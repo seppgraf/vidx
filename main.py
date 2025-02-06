@@ -5,6 +5,40 @@ from evdev import  UInput,InputDevice, categorize, ecodes,AbsInfo
 from pyudmx import pyudmx
 from time import sleep
 
+
+
+class high_res():
+
+    value = 0
+    
+    def __init__(self,value = 0):
+        self.value = value & 0xFFFF
+
+
+    def increment(self,value):
+        if self.value + value > 0xFFFF:
+            self.value = 0xFFFF          
+        else: 
+            self.value += value             
+        
+    def decrement(self,value):
+        if self.value - value < 0:
+            self.value = 0
+        else :
+            self.value -= value 
+            
+    
+    def get_high(self):
+        return self.value >> 8 
+    
+    def get_low(self):
+        return self.value & 0x00FF 
+
+    def get(self):
+        return self.value
+        
+
+
 def mh_pan_tilt(dmxdev,cv, pan = 127,pan_high = 127,tilt = 127,tilt_high = 127):
      
     cv[0] = pan
@@ -70,6 +104,12 @@ def dmx_process(a):
     cv = [0 for v in range(0, 512)]
 
     light_on = False 
+
+    tilt_value = high_res()
+    pan_value = high_res()
+
+    tilt_value.set_high(127)
+    pan_value.set_high(127)
 
 
 
